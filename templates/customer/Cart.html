@@ -1,0 +1,80 @@
+{% extends 'customer/base.html' %}
+
+{% block bodyblock %}
+<style>
+  #cart-page .card:hover, #cart-page .btn:hover, #cart-page a:hover {
+    box-shadow: none !important;
+    background-color: inherit !important;
+    color: inherit !important;
+    transform: none !important;
+  }
+</style>
+<div class="container my-5" id="cart-page">
+  <h1 class="text-center display-4 mb-5">Your Shopping Cart</h1>
+
+  <div class="row">
+    <!-- Cart Details -->
+    <div class="col-lg-8 col-md-12 mb-4">
+      {% if cart_items %}
+        {% for cart_item in cart_items %}
+        <div class="card mb-4 border-0 rounded-lg">
+          <div class="row g-0">
+            <!-- Display Image -->
+            <div class="col-md-4">
+              <img
+                src="http://127.0.0.1:8000/restaurent_manager/media/{{ cart_item.product_id.image }}"
+                alt="{{ cart_item.product_id.food_name }}"
+                class="img-fluid rounded-start"
+                style="object-fit: cover; height: 100%;"
+              />
+            </div>
+
+            <!-- Display Product Details -->
+            <div class="col-md-8">
+              <div class="card-body">
+                <h4 class="card-title">{{ cart_item.product_id.food_name|title }}</h4>
+                <p class="card-text text-muted">{{ cart_item.product_id.food_description }}</p>
+                <p class="card-text text-success"><strong>&#x20b9; {{ cart_item.product_id.food_price }}</strong></p>
+                <p class="card-text">Rating: <span class="text-warning">&#9733;&#9733;&#9733;&#9733;&#9734;</span> 4.5/5</p>
+
+                <!-- Increment/Decrement and Delete Buttons -->
+                <div class="d-flex justify-content-center align-items-center mt-3">
+                  <a href="/cart/dec/{{ cart_item.id }}" class="btn btn-outline-danger me-2 rounded-pill">-</a>
+                  <input
+                    type="number"
+                    value="{{ cart_item.quantity }}"
+                    class="form-control text-center me-2 rounded-pill"
+                    style="width: 60px;"
+                    disabled
+                  />
+                  <a href="/cart/inc/{{ cart_item.id }}" class="btn btn-outline-success me-2 rounded-pill">+</a>
+                  <a href="/cart/delete/{{ cart_item.id }}" class="btn btn-danger rounded-pill ms-2">Delete</a>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+        {% endfor %}
+      {% else %}
+        <div class="alert alert-info text-center">Your cart is empty. Start adding products!</div>
+      {% endif %}
+    </div>
+
+    <!-- Summary and Checkout -->
+    <div class="col-lg-4 col-md-12">
+      <div class="card border-0 rounded-lg">
+        <div class="card-body">
+          <h2 class="card-title text-center mb-4 bg-warning py-2 rounded">Hello, {{ user.username|title }}</h2>
+          <hr />
+          <h4>Total Items: <span>{{ quantity }}</span></h4>
+          <h4 class="mb-4">Total Price: <span class="text-success">&#x20b9; {{ total_price }}</span></h4>
+
+ 
+          <a href="/order-summary"  class="btn btn-primary btn-lg w-100 rounded-pill">Place Order</a>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+{% endblock bodyblock %}

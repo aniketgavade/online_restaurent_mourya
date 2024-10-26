@@ -1,0 +1,23 @@
+{% extends 'restaurent_manager/manager_dashboard.html' %}
+{% block bodyblock %}
+
+<div class="container mt-5">
+    <h2 class="mb-4">Update Delivery Status for Order #{{ order.id }}</h2>
+    <form method="POST">
+        {% csrf_token %}
+        <div class="form-group">
+            <label for="delivery_status">Delivery Status:</label>
+            <select name="delivery_status" id="delivery_status" class="form-control">
+                <option value="Pending" {% if order.delivery_status == "Order Placed" %}selected{% endif %}>Order Placed</option>
+                <option value="Processed" {% if order.delivery_status == "Processed" %}selected{% endif %}>Processed</option>
+                <option value="Shipped" {% if order.delivery_status == "Shipped" %}selected{% endif %}>Shipped</option>
+                <option value="Delivered" {% if order.delivery_status == "Delivered" %}selected{% endif %}>Delivered</option>
+                <option value="Cancelled" {% if order.delivery_status == "Cancelled" %}selected{% endif %}>Cancelled</option>
+            </select>
+        </div>
+        
+        <button type="submit" class="btn btn-primary mt-3">Update Status</button>
+    </form>
+</div>
+
+{% endblock bodyblock %}

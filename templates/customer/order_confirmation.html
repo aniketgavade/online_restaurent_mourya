@@ -1,0 +1,58 @@
+{% extends 'customer/base.html' %}
+
+{% block bodyblock %}
+
+<div class="container mt-5">
+    <div class="card shadow-lg border-0">
+        <div class="card-header text-center bg-danger text-white">
+            <h2>Order Confirmation</h2>
+        </div>
+        <div class="card-body">
+            <p class="text-success">Thank you, {{ user.username }}! Your order has been successfully placed.</p>
+
+            <h4 class="text-danger">Order Details</h4>
+            <ul class="list-group mb-4">
+                {% for item in order.items.all %}
+                    <li class="list-group-item d-flex justify-content-between align-items-center">
+                    
+                        <img src="http://127.0.0.1:8000/restaurent_manager/media/{{item.product.image }}" alt="" class="img-thumbnail" style="width: 100px; height: 100px; margin-right: 10px;">
+                        {{ item.product.food_name }} (x{{ item.quantity }})
+                        <span>&#x20B9; {{ item.price }}</span>
+                    </li>
+                {% endfor %}
+            </ul>
+
+            <h4>Total Price: <span class="text-danger">&#x20B9; {{ order.total_price }}</span></h4>
+
+            <h4 class="text-danger">Payment Details</h4>
+            <p>Payment Method: {{ order.payment_method }}</p>
+            <p>Payment Status: {{ order.delivery_status }}</p>
+            <p>Payment Date: {{ order.created_at|date:"F j, Y, g:i a" }}</p>
+        </div>
+        <div class="card-footer text-center">
+            <a href="/order-history" class="btn btn-danger">View Order History</a>
+            <a href="/" class="btn btn-danger">Continue Shopping</a>
+        </div>
+    </div>
+</div>
+
+<style>
+ 
+    body{
+        background: rgb(255, 227, 226);
+    }
+    .card {
+       
+        border-radius: 15px;
+    }
+    .btn-danger {
+        background-color: #e60000; /* Zomato red */
+        border: none;
+        transition: background-color 0.3s ease;
+    }
+    .btn-danger:hover {
+        background-color: #cc0000; /* Darker shade on hover */
+    }
+</style>
+
+{% endblock %}

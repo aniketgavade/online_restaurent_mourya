@@ -1,0 +1,178 @@
+{% extends 'customer/base.html' %}
+{% block bodyblock %}
+<div class="container my-5">
+    <h1 class="text-center display-4 mb-5 text-primary">Checkout</h1>
+
+    <div class="row">
+        <!-- Billing & Shipping Details -->
+        <div class="col-lg-8 col-md-12 mb-4">
+            <div class="card border-0 rounded-lg p-4 shadow-lg">
+                <h3 class="mb-4 text-secondary">Billing & Shipping Details</h3>
+
+                <!-- Address selection -->
+                <form method="POST" action="/place_order/">
+                    {% csrf_token %}
+                    <h5 class="mb-4">Select Shipping Address</h5>
+                    <div class="mb-3">
+                        <select class="form-select border-primary rounded-pill" name="address" required>
+                            <!-- User's current address details as the first option -->
+                            <option value="user_address">
+                                {{ user.get_full_name }} - {{ profile.street }}, {{ profile.city }}, {{ profile.state }} - {{ profile.pincode }}
+                            </option>
+
+                            <!-- Existing addresses -->
+                            {% for address in address %}
+                                <option value="{{ address.id }}">
+                                    {{ user.get_full_name }}, {{ address.full_address }}, {{ address.city }}, {{ address.state }} - {{ address.pincode }}
+                                </option>
+                            {% endfor %}
+                        </select>
+                    </div>
+
+                    <!-- Link to update address -->
+                    <div class="mb-3">
+                        <a href="{% url 'add_address' %}" class="text-primary">Update Address</a>
+                    </div>
+
+                    <!-- User's details -->
+                    <div class="mb-3">
+                        <label for="fullName" class="form-label">Full Name</label>
+                        <input type="text" class="form-control border-primary rounded-pill" id="fullName" name="full_name" value="{{ user.get_full_name }}" required>
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="email" class="form-label">Email Address</label>
+                        <input type="email" class="form-control border-primary rounded-pill" id="email" name="email" value="{{ user.email }}" required>
+                    </div>
+
+                    <div class="mb-3">
+                        <label for="street" class="form-label">Street</label>
+                        <input type="text" class="form-control border-primary rounded-pill" id="street" name="street" value="{{ profile.street }}" required>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label for="city" class="form-label">City</label>
+                            <input type="text" class="form-control border-primary rounded-pill" id="city" name="city" value="{{ profile.city }}" required>
+                        </div>
+
+                        <div class="col-md-6 mb-3">
+                            <label for="postalCode" class="form-label">Postal Code</label>
+                            <input type="text" class="form-control border-primary rounded-pill" id="postalCode" value="{{ profile.pincode }}" name="postal_code" required>
+                        </div>
+                    </div>
+
+                    <div class="row">
+                        <div class="col-md-6 mb-3">
+                            <label for="phone" class="form-label">Phone Number</label>
+                            <input type="tel" class="form-control border-primary rounded-pill" id="phone" value="{{ profile.contact }}" name="phone" required>
+                        </div>
+
+                        <div class="col-md-6 mb-3">
+                            <label for="paymentMethod" class="form-label">Payment Method</label>
+                            <select class="form-select border-primary rounded-pill" id="paymentMethod" name="payment_method" required>
+                                <option value="credit_card">Online</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    
+                </form>
+            </div>
+        </div>
+
+        <!-- Order Summary -->
+        <div class="col-lg-4 col-md-12">
+            <div class="card border-0 rounded-lg p-4 shadow-lg mb-4">
+                <h3 class="mb-4 text-secondary">Order Summary</h3>
+                <hr />
+
+                <h4>Total Items: <span class="badge bg-primary">{{ quantity }}</span></h4>
+                <h4 class="mb-4">Total Price: <span class="text-success">&#x20b9; {{ total_price }}</span></h4>
+                <hr />
+
+                <p class="text-muted mb-4">Review your details before placing the order.</p>
+                <button id="rzp-button1" class="btn btn-success w-100 rounded-pill shadow">Pay with Razorpay</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script src="https://checkout.razorpay.com/v1/checkout.js"></script>
+
+<script>
+  var options = {
+    "key": "rzp_test_93atKPgF1eLJ4M", // Enter the Key ID generated from the Dashboard
+    "amount": "{% widthratio total_price 1 100 %}", // Amount is in currency subunits. Default currency is INR. Hence, 50000 refers to 50000 paise
+    "currency": "INR",
+    "name": "Mourya online",
+    "description": "Test Transaction",
+    "image": "https://example.com/your_logo",
+    "order_id": "{{id}}", //This is a sample Order ID. Pass the id obtained in the response of Step 1
+    "handler": function (response) {
+      window.location.href = "/order-confirmation/" + "{{ order_id }}";
+    },
+    "prefill": {
+      "name": "{{ user.get_full_name }}",
+      "email": "{{ user.email }}",
+      "contact": "{{ user.phone }}"
+    },
+    "notes": {
+      "address": "Razorpay Corporate Office"
+    },
+    "theme": {
+      "color": "#3399cc"
+    }
+  };
+
+  var rzp1 = new Razorpay(options);
+
+  rzp1.on('payment.failed', function (response) {
+    alert(response.error.code);
+    alert(response.error.description);
+    alert(response.error.source);
+    alert(response.error.step);
+    alert(response.error.reason);
+    alert(response.error.metadata.order_id);
+    alert(response.error.metadata.payment_id);
+  });
+
+  document.getElementById('rzp-button1').onclick = function (e) {
+    rzp1.open();
+    e.preventDefault();
+  }
+</script>
+
+<style>
+  .btn-primary, .btn-success {
+    background: linear-gradient(90deg, rgba(0,123,255,1) 0%, rgba(40,167,69,1) 100%);
+    border: none;
+    font-weight: bold;
+  }
+
+  .card {
+    background: #f8f9fa;
+  }
+
+  .border-primary {
+    border-color: #007bff !important;
+  }
+
+  .form-control, .form-select {
+    transition: all 0.3s ease;
+  }
+
+  .form-control:focus, .form-select:focus {
+    box-shadow: 0 0 8px rgba(0,123,255,0.5);
+  }
+
+  .rounded-pill {
+    border-radius: 50rem;
+  }
+
+  .shadow-lg {
+    box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+  }
+</style>
+
+{% endblock bodyblock %}

@@ -1,0 +1,212 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/5.3.0/css/bootstrap.min.css">
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #f8f9fa;
+        }
+
+        /* Dashboard Layout */
+        .dashboard {
+            display: flex;
+        }
+
+        .sidebar {
+            width: 250px;
+            height: 100vh;
+            position: fixed;
+            top: 0;
+            left: 0;
+            background-color: #343a40;
+            color: #fff;
+            padding-top: 1rem;
+        }
+
+        .sidebar a {
+            color: #adb5bd;
+            text-decoration: none;
+            display: block;
+            padding: 10px 15px;
+        }
+
+        .sidebar a:hover {
+            background-color: #495057;
+            color: #fff;
+        }
+
+        .main-content {
+            margin-left: 250px;
+            padding: 2rem;
+            width: calc(100% - 250px);
+        }
+
+        .header {
+            background-color: #ffffff;
+            padding: 15px;
+            border-bottom: 1px solid #dee2e6;
+            margin-bottom: 2rem;
+        }
+
+        .dashboard-cards {
+            display: flex;
+            justify-content: space-between;
+        }
+
+        .dashboard-card {
+            background-color: #ffffff;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            padding: 20px;
+            flex: 1;
+            margin: 0 10px;
+            text-align: center;
+        }
+
+        .recent-orders {
+            margin-top: 2rem;
+        }
+
+        .recent-orders table {
+            width: 100%;
+            background-color: #ffffff;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        .recent-orders th,
+        .recent-orders td {
+            padding: 12px;
+            text-align: left;
+            border-bottom: 1px solid #dee2e6;
+        }
+
+        .recent-orders th {
+            background-color: #f8f9fa;
+        }
+
+        .recent-orders tbody tr:hover {
+            background-color: #f1f3f5;
+        }
+    </style>
+</head>
+
+<body>
+    <!-- Dashboard Layout -->
+    <div class="sidebar">
+        <h2 class="text-white text-center">Dashboard</h2>
+        <a href="/">Dashboard</a>
+        <a href="/restaurent_manager/view-orders">Orders</a>
+        <a href="/restaurent_manager/categories/view-product/">Products</a>
+        <a href="/restaurent_manager/customers/">Customers</a>
+        <a href="#">Reports</a>
+    </div>
+
+    <div class="main-content">
+        <div class="header">
+            <h1>Welcome to the Manager Dashboard</h1>
+        </div>
+
+        <!-- Dashboard Cards -->
+        <div class="dashboard-cards">
+            <div class="dashboard-card">
+                <h5>Orders</h5>
+                <p class="display-4">{{ total_orders_count }}</p>
+            </div>
+            <div class="dashboard-card">
+                <h5>Revenue</h5>
+                <p class="display-4">&#x20B9;{{ total_sum }}</p>
+            </div>
+            <div class="dashboard-card">
+                <h5>Customers</h5>
+                <p class="display-4">{{ total_users }}</p>
+            </div>
+            <div class="dashboard-card">
+                <h5>Products</h5>
+                <p class="display-4">{{ total_products }}</p>
+            </div>
+        </div>
+
+        <!-- Recent Orders Section -->
+        <div class="recent-orders mt-5">
+            <h1>All Orders</h1>
+            <table class="table table-striped">
+                <thead>
+                    <tr>
+                        <th>Order ID</th>
+                        <th>Customer</th>
+                        <th>Date</th>
+                        <th>Status</th>
+                        <th>Total</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for order in orders %}
+                    <tr id="order-{{ order.id }}">
+                        <td>{{ order.id }}</td>
+                        <td>{{ order.customer.get_full_name }}</td>
+                        <td>{{ order.created_at|date:"F j, Y" }}</td>
+                        <td id="status-{{ order.id }}">
+                            {% if order.delivery_status == 'Delivered' %}
+                            <span class="badge bg-success">{{ order.delivery_status }}</span>
+                            {% elif order.delivery_status == 'Shipped' %}
+                            <span class="badge bg-info">{{ order.delivery_status }}</span>
+                            {% elif order.delivery_status == 'Processed' %}
+                            <span class="badge bg-warning">{{ order.delivery_status }}</span>
+                            {% elif order.delivery_status == 'Order Placed' %}
+                            <span class="badge bg-primary">{{ order.delivery_status }}</span>
+                            {% elif order.delivery_status == 'Cancelled' %}
+                            <span class="badge bg-danger">{{ order.delivery_status }}</span>
+                            {% else %}
+                            <span class="badge bg-secondary">Unknown Status</span>
+                            {% endif %}
+                        </td>
+                        <td>&#x20B9;{{ order.total_price }}</td>
+                    </tr>
+                    {% empty %}
+                    <tr>
+                        <td colspan="5" class="text-center">No orders found.</td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <script>
+        function updateStatus(orderId, newStatus) {
+            // Update the status display
+            var statusElement = document.getElementById('status-' + orderId);
+            statusElement.innerHTML = '';
+
+            // Create new badge element
+            var badge = document.createElement('span');
+            badge.className = 'badge';
+
+            // Set the class and text based on the new status
+            if (newStatus === 'Delivered') {
+                badge.classList.add('bg-success');
+                badge.textContent = newStatus;
+            } else if (newStatus === 'Shipped') {
+                badge.classList.add('bg-info');
+                badge.textContent = newStatus;
+            } else if (newStatus === 'Processed') {
+                badge.classList.add('bg-warning');
+                badge.textContent = newStatus;
+            } else if (newStatus === 'Order Placed') {
+                badge.classList.add('bg-primary');
+                badge.textContent = newStatus;
+            } else if (newStatus === 'Cancelled') {
+                badge.classList.add('bg-danger');
+                badge.textContent = newStatus;
+            }
+
+            // Append the badge to the status element
+            statusElement.appendChild(badge);
+        }
+    </script>
+</body>
+</html>

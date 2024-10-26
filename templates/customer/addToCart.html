@@ -1,0 +1,54 @@
+{% extends 'customer/base.html' %}  
+{% block bodyblock %}  
+<div class="container mx-auto p-4">  
+  <h1 class="text-3xl font-bold mb-4">Shopping Cart</h1>  
+  <div class="row">  
+    <!-- cart details -->  
+    <div class="col-lg-8 col-md-12 mb-4">  
+      <hr class="border-gray-300 my-4" />  
+      {% for cart_item in cart_items %}  
+      <div class="row mb-4 align-items-center shadow-md p-4 rounded-lg bg-white">  
+        <!-- display image -->  
+        <div class="col-sm-4 col-12 mb-2">  
+          <img  
+            src="http://127.0.0.1:8000/restaurent_manager/media/{{cart_item.product_id.image}}"  
+            alt="{{cart_item.product_id.name}}"  
+            class="img-fluid rounded-lg shadow-lg"  
+          />  
+        </div>  
+        <!-- display product details -->  
+        <div class="col-sm-8 col-12">  
+          <h2 class="text-xl font-semibold">{{cart_item.product_id.name|title}}</h2>  
+          <p class="text-gray-600">{{cart_item.product_id.description}}</p>  
+          <p class="text-lg font-bold text-green-600">Price: &#x20b9; {{cart_item.product_id.price}}</p>  
+          <p class="text-yellow-500">Rating: 4.5/5</p> <!-- Placeholder for rating -->  
+
+          <div class="d-flex align-items-center mt-2">  
+            <a href="/cart/dec/{{cart_item.id}}" class="btn btn-danger me-2">-</a>  
+            <input  
+              type="number"  
+              value="{{cart_item.quantity}}"  
+              class="form-control w-16 text-center me-2 border border-gray-300 rounded"  
+              style="width: 60px;"  
+              disabled  
+            />  
+            <a href="/cart/inc/{{cart_item.id}}" class="btn btn-success me-2">+</a>  
+            <a href="delete/{{cart_item.id}}" class="btn btn-danger">Delete</a>  
+          </div>  
+        </div>  
+      </div>  
+      <hr class="border-gray-300 my-4" />  
+      {% endfor %}  
+    </div>  
+
+    <!-- total items and price details -->  
+    <div class="col-lg-4 col-md-12 border rounded-lg h-50 p-4 bg-gray-100">  
+      <h1 class="bg-warning text-center font-bold text-xl rounded-lg py-2">Hello, {{user.username|title}}</h1>  
+      <hr />  
+      <h2 class="text-lg font-semibold">Total Items: {{quantity}}</h2>  
+      <h3 class="text-lg font-bold">Total Price: &#x20b9; {{total_price}}</h3>  
+      <a href="/order-summary" class="btn btn-primary w-100 mt-3 rounded-lg">Place Order</a>  
+    </div>  
+  </div>  
+</div>  
+{% endblock bodyblock %}

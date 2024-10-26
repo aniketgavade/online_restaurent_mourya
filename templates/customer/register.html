@@ -1,0 +1,71 @@
+{% extends 'customer/base.html' %}
+
+{% block bodyblock %}
+<div class="container">
+  <div class="row justify-content-center mt-5">
+    <div class="col-md-6 ">
+      <div class="card mt-5 shadow" style="border-radius: 20px;">
+        <div class="card-header text-center">
+          <h3 class="display-4 text-success mb-0">Register</h3>
+        </div>
+        <div class="card-body ">
+          <form method="POST">
+            {% csrf_token %}
+
+            <!-- Display error message if any -->
+            {% if error_msg %}
+              <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                {{ error_msg }}
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+              </div>
+            {% endif %}
+
+            <!-- Username Field -->
+            <div class="mb-3">
+              <label for="username" class="form-label">Username</label>
+              <input type="text" class="form-control" id="username" name="username" required>
+              <p id="errorUser" class="text-danger"></p>
+            </div>
+
+            <!-- Password Field -->
+            <div class="mb-3">
+              <label for="password" class="form-label">Password</label>
+              <input type="password" class="form-control" id="password" name="password" required>
+              <p id="errorPass" class="text-danger"></p>
+            </div>
+
+            <!-- Confirm Password Field -->
+            <div class="mb-3">
+              <label for="cpassword" class="form-label">Confirm Password</label>
+              <input type="password" class="form-control" id="cpassword" name="cpassword" required>
+              <p id="errorCpassword" class="text-danger"></p>
+            </div>
+
+            <!-- User Type Selection -->
+            <div class="mb-3">
+              <label for="type" class="form-label">Register as:</label>
+              <select name="type" id="type" class="form-select" required>
+                <option value="customer">Customer</option>
+                {% if not restaurent_manager_disabled %}
+                  <option value="restaurent_manager">Restaurent Manager</option>
+                {% endif %}
+              </select>
+            </div>
+
+            <!-- Submit Button -->
+            <button type="submit" class="btn btn-success w-100">Register</button>
+
+            <!-- Horizontal Line Separator -->
+            <hr class="my-4" style="border: 1px solid #388e3c;">
+
+            <!-- Link to Login -->
+            <p class="text-center mt-2">Already a user? <a href="/login" class="text-success text-decoration-none">Click here</a> to login</p>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+{% endblock bodyblock %}

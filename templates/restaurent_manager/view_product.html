@@ -1,0 +1,101 @@
+{% extends 'restaurent_manager/manager_dashboard.html' %}
+{% block bodyblock %}
+
+<style>
+  body {
+    background: linear-gradient(135deg, #f7c6c7, #c8e0f0); /* Gradient background */
+  }
+
+  .card {
+    background: white;
+    border-radius: 15px; /* Rounded corners for card */
+    overflow: hidden;
+  }
+
+  table {
+    background-color: #fff;
+    border-collapse: collapse;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    border-radius: 15px; /* Rounded corners for table */
+  }
+
+  thead {
+    background-color: #f8f9fa;
+  }
+
+  th, td {
+    vertical-align: middle;
+  }
+
+  img {
+    height: 40px;
+    width: 40px;
+    border-radius: 50%;
+    border: 1px solid black;
+    transition: transform 0.5s ease-in-out, border-radius 0.5s;
+  }
+
+  img:hover {
+    transform: scale(1); /* Adjusted hover effect */
+    border: none;
+    border-radius: 50%;
+  }
+
+  .btn-warning:hover {
+    background-color: #ffc107;
+    color: white;
+  }
+
+  .btn-danger:hover {
+    background-color: #dc3545;
+    color: white;
+  }
+</style>
+
+<div class="container mt-5">
+  <div class="row justify-content-center">
+    <div class="col">
+      <div class="card shadow-lg border-light rounded-4">
+        <div class="card-body p-4">
+          <h1 class="text-center mb-4">Manage Your food</h1>
+
+          {% if total_products == 0 %}
+          <h3>There are no products found, <a href="/restaurent_manager/categories/">click here</a> to add a product</h3>
+          {% else %}
+          <table class="table table-hover table-bordered mt-3 w-100 text-center">
+            <thead>
+              <tr>
+                <th scope="col">ID</th>
+                <th scope="col">IMAGE</th>
+                <th scope="col">NAME</th>
+                <th scope="col">PRICE</th>
+                
+                <th scope="col">CATEGORY</th>
+                <th scope="col">DESCRIPTION</th>
+                <th scope="col" colspan="2">ACTION</th>
+              </tr>
+            </thead>
+            <tbody>
+              {% for product in products %}
+              <tr>
+                <th scope="row">{{ product.id }}</th>
+                <td><img src="http://127.0.0.1:8000/restaurent_manager/media/{{ product.image }}" alt=""></td>
+                <td>{{ product.food_name|title }}</td>
+                <td>&#x20b9; {{ product.food_price }}</td>
+              
+                <td>{{ product.category_id.name }}</td>
+                <td>{{ product.food_description }}</td>
+                <td><a href="/restaurent_manager/products/update-product/{{ product.id }}" class="btn btn-warning">Update</a></td>
+                <td><a href="/restaurent_manager/products/delete/{{ product.id }}" class="btn btn-danger">Delete</a></td>
+              </tr>
+              {% endfor %}
+            </tbody>
+          </table>
+          {% endif %}
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+{% endblock bodyblock %}

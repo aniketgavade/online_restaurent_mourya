@@ -1,0 +1,54 @@
+{% extends 'customer/base.html' %}
+
+{% block bodyblock %}
+<div class="container">
+  <div class="row justify-content-center mt-5">
+    <div class="col-md-6">
+      <div class="card mt-5 shadow" style="border-radius: 20px;">
+        <div class="card-header text-center">
+          <h3 class="display-4 text-success mb-0">Login</h3>
+        </div>
+        <div class="card-body">
+          <form method="POST">
+            {% csrf_token %}
+
+            <!-- Display error message if any -->
+            {% if error_msg %}
+              <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                {{ error_msg }}
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+              </div>
+            {% endif %}
+
+            <!-- Username Field -->
+            <div class="mb-3">
+              <label for="username" class="form-label text-uppercase fw-bold text-success">Username</label>
+              <input type="text" class="form-control border border-success rounded-pill" id="username" name="username" required>
+              <p id="errorUser" class="text-danger"></p>
+            </div>
+
+            <!-- Password Field -->
+            <div class="mb-3">
+              <label for="password" class="form-label text-uppercase fw-bold text-success">Password</label>
+              <input type="password" class="form-control border border-success rounded-pill" id="password" name="password" required>
+              <p id="errorPass" class="text-danger"></p>
+            </div>
+
+            <!-- Submit Button -->
+            <button type="submit" class="btn btn-success w-100 rounded-pill">Login</button>
+
+            <!-- Horizontal Line Separator -->
+            <hr class="my-4 border border-success">
+
+            <!-- Link to Register -->
+            <p class="text-center mt-2">New user? <a href="/register" class="text-success text-decoration-none">Click here</a> to register</p>
+            <p class="text-center mt-2"><a href="{% url 'password_reset' %}" class="text-success text-decoration-none">Forgot your password?</a></p>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+{% endblock bodyblock %}

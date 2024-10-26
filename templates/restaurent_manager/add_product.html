@@ -1,0 +1,170 @@
+{% extends 'restaurent_manager/manager_dashboard.html' %}
+{% block bodyblock %}
+
+<style>
+    body {
+        background-image: linear-gradient(120deg, #a6c0fe 0%, #f68084 100%);
+        min-height: 100vh;
+    }
+
+    /* Card Styles */
+    .card {
+        border: none;
+        border-radius: 20px;
+        background-color: #fff;
+        box-shadow: 0px 10px 20px rgba(0, 0, 0, 0.1);
+    }
+
+    .card-body {
+        padding: 2rem;
+    }
+
+    /* Form Styles */
+    .form-label {
+        font-weight: bold;
+        color: #333;
+    }
+
+    .form-control {
+        height: calc(3rem + 2px);
+        padding: 0.75rem 1.25rem;
+        border-radius: 50px;
+        border: none;
+        background-color: #f5f7fa;
+        box-shadow: 0px 2px 6px rgba(0, 0, 0, 0.1);
+    }
+
+    .form-control:focus {
+        background-color: #f0f4fc;
+        border-color: transparent;
+        box-shadow: 0px 2px 6px rgba(0, 0, 0, 0.15);
+    }
+
+    .btn {
+        border-radius: 50px;
+        font-weight: bold;
+        background-image: linear-gradient(120deg, #a6c0fe 0%, #f68084 100%);
+        border: none;
+        box-shadow: 0px 4px 10px rgba(0, 0, 0, 0.15);
+        transition: all 0.3s ease-in-out;
+    }
+
+    .btn:hover {
+        background-image: linear-gradient(120deg, #f68084 0%, #a6c0fe 100%);
+        box-shadow: 0px 6px 12px rgba(0, 0, 0, 0.2);
+    }
+
+    /* Text Styles */
+    h1.header-title {
+        font-weight: bold;
+        color: #555;
+        font-size: 2rem;
+        margin-bottom: 1.5rem;
+    }
+
+    #delivery_text {
+        margin-top: 10px;
+        font-size: 0.9rem;
+        color: #6c757d;
+    }
+
+    .form-check-input {
+        width: 20px;
+        height: 20px;
+        margin-left: 5px;
+        margin-right: 10px;
+    }
+
+    /* Media Queries */
+    @media (max-width: 768px) {
+        .form-control {
+            font-size: 1rem;
+        }
+
+        .btn {
+            font-size: 1rem;
+        }
+
+        h1.header-title {
+            font-size: 1.75rem;
+        }
+    }
+</style>
+
+<!-- Form Structure -->
+<div class="container py-5">
+    <div class="row justify-content-center">
+        <div class="col-md-8 col-lg-6">
+            <!-- Card for Form Container -->
+            <div class="card">
+                <div class="card-body">
+                    <h1 class="text-center header-title">
+                        Add food for <span class="text-danger text-decoration-underline">{{ category_name|title }}</span> Category
+                    </h1>
+
+                    <form method="POST" enctype="multipart/form-data">
+                        {% csrf_token %}
+                        {% if error_msg %}
+                            <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                                {{ error_msg }}
+                                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+                            </div>
+                        {% endif %}
+
+                        <!-- Food Name -->
+                        <div class="mb-3">
+                            <label for="food_name" class="form-label">Name</label>
+                            <input type="text" class="form-control form-control-lg" id="food_name" name="food_name" placeholder="Enter food name">
+                        </div>
+
+                        <!-- Price -->
+                        <div class="mb-3">
+                            <label for="food_price" class="form-label">Price</label>
+                            <input type="number" class="form-control form-control-lg" id="food_price" name="food_price" placeholder="Enter price">
+                        </div>
+
+                        <!-- Description -->
+                        <div class="mb-3">
+                            <label for="food_description" class="form-label">Description</label>
+                            <input type="text" class="form-control form-control-lg" id="food_description" name="food_description" placeholder="Enter description">
+                        </div>
+
+                        <!-- Quantity -->
+                    
+
+                        <!-- Image -->
+                        <div class="mb-3">
+                            <label for="image" class="form-label">Image</label>
+                            <input type="file" class="form-control" id="image" name="image">
+                        </div>
+
+                        <div class="mb-3">
+                          <label>Is Deliverable:</label><br>
+                          <input type="radio" id="deliverable_yes" name="Deliverable" value="True" onclick="showDeliveryText(true)">
+                          <label for="deliverable_yes">Delivery</label>
+                          <input type="radio" id="deliverable_no" name="Deliverable" value="False" onclick="showDeliveryText(false)">
+                          <label for="deliverable_no">No Delivery</label>
+                      
+                          <!-- Text for Delivery -->
+                          <div id="delivery_text" style="display: none;">
+                              We will deliver right to your door
+                          </div>
+                      </div>
+                        <!-- Submit Button -->
+                        <button type="submit" class="btn btn-primary w-100 py-3 mt-3">Add Product</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    // JavaScript to show or hide the delivery text
+    function showDeliveryText(isDelivery) {
+        var deliveryText = document.getElementById("delivery_text");
+        deliveryText.style.display = isDelivery ? "block" : "none";
+    }
+</script>
+
+{% endblock bodyblock %}
